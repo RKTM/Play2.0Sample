@@ -3,6 +3,7 @@ package controllers
 import play.api._
 import play.api.mvc._
 import play.api.data._
+import play.api.data.Forms._
 
 import views._
 
@@ -12,7 +13,7 @@ import models._
 object TaskController extends Controller {
   
   val taskForm = Form(
-      "label" -> requiredText
+      "label" -> nonEmptyText
   )
     
   def index = Action {
@@ -27,11 +28,14 @@ object TaskController extends Controller {
         errors => BadRequest(views.html.tasks_index(Task.all(), errors)),
         label => { 
           Task.create(label)
-          Redirect(routes.TaskController.tasks)
+          Redirect(routes.TaskController.index)
         }
       )
   }
   
-  def deleteTask(id: Long) = TODO
+  def deleteTask(id: Long) = Action {
+    Task.delete(id)
+    Redirect(routes.TaskController.index)
+  }
 
 }
